@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: mirror-accelerate-engine
+  namespace: kube-system
+  labels:
+    app: mirror-accelerate-engine
+spec:
+  type: ClusterIP
+  selector:
+     app: mirror-accelerate-engine
+  ports:
+    - name: https
+      port: 8443
+      targetPort: https

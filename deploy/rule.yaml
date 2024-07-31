@@ -1,0 +1,21 @@
+apiVersion: admissionregistration.k8s.io/v1
+kind: MutatingWebhookConfiguration
+metadata:
+  name: mirror-acceleration-engine
+webhooks:
+  - name: mirror-acceleration-engine.devops-engineer.com.cn
+    admissionReviewVersions: ["v1"]
+    sideEffects: None
+    timeoutSeconds: 10
+    clientConfig:
+      service:
+        name: mae-webhook-service
+        namespace: kube-system
+        path: /mutate
+        port: 8443
+      caBundle: "<base64-encoded-ca-bundle>"
+    rules:
+      - apiVersions: ["v1"]
+        apiGroups: ["apps"]
+        resources: ["deployments", "statefulsets", "daemonsets"]
+        operations: ["CREATE"]

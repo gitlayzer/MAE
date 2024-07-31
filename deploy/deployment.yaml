@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: mirror-accelerate-engine
+  namespace: kube-system
+  labels:
+    app: mirror-accelerate-engine
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: mirror-accelerate-engine
+  template:
+    metadata:
+      labels:
+        app: mirror-accelerate-engine
+    spec:
+      containers:
+        - name: mirror-accelerate-engine
+          image: docker.cloudimages.asia/layzer/mae:latest
+          imagePullPolicy: ifNotPresent
+          ports:
+            - name: https
+              containerPort: 8443
+          resources:
+            requests:
+              cpu: 100m
+              memory: 100Mi
+            limits:
+              cpu: 500m
+              memory: 500Mi
+          volumeMounts:
+            - name: mae-secret-crt
+              mountPath: /
+              subPath: tls.crt
+            - name: mae-secret-key
+              mountPath: /
+              subPath: tls.key
+      volumes:
+        - name: mae-secret-crt
+          secret:
+            secretName: mae
+            items:
+              - key: tls.crt
+                path: tls.crt
+        - name: mae-secret-key
+          secret:
+            secretName: mae
+            items:
+              - key: tls.key
+                path: tls.key
